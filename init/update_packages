@@ -1,0 +1,7 @@
+#! /bin/bash
+python -c 'import sys; sys.real_prefix' 2>/dev/null && INVENV=1 || INVENV=0
+if [ $INVENV = 1 ]; then
+    pip install -r init/requirements.txt
+else
+    echo "activate virtual environment first"
+fi
