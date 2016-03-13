@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <script type="text/javascript" src="/static/js/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/angular/angular.min.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/js/bootstrap/dist/css/bootstrap.min.css">
+</head>
+<script type="text/javascript">
+angular.module("loginApp", [])
+.controller("loginCtrl", function ($scope, $http, $window) {
+    $scope.login = {};
+
+    $scope.login.submit = function () {
+        $http({
+            method: 'POST',
+            url: '/login',
+            data: {
+                email: $scope.login.email
+            }
+        }).then(function (resp) {
+            if (resp.data.email) {
+                console.log("in")
+                $window.location.href = "/";
+            }
+        })
+    };
+
+});
+</script>
+<body ng-app="loginApp">
+    <form name="loginForm" ng-submit="login.submit()" ng-controller="loginCtrl">
+        <div class="form-group">
+            <label>User Email: </label>
+            <input type="email" name="email" class="form-control" ng-model="login.email" required>
+            <i class="text-danger"
+                  ng-show="loginForm.email.$dirty && loginForm.email.$error.required">Email is required</i>
+        </div>
+        <button type="submit" ng-disabled="loginForm.$invalid || login.loading" class="btn btn-primary">Register</button>
+    </form>
+</body>
+</html>

@@ -14,7 +14,7 @@ from sqlalchemy.orm import sessionmaker, backref, relationship
 NAME_LENGTH = 16
 
 CURRENT_PATH = os.getcwd()
-engine = sqlalchemy.create_engine('sqlite:///{}/web/web.db'.format(CURRENT_PATH))
+engine = sqlalchemy.create_engine('sqlite:///{}/web.db'.format(CURRENT_PATH))
 
 
 def random_string(length):
@@ -40,13 +40,9 @@ def managed_session(sess=None):
 class Base(object):
     """Base class for database models"""
     @classmethod
-    def _mapper(cls):
-        return cls.__mapper__
-
-    @classmethod
     def keys(cls):
         """return all the mapped keys for the model"""
-        return [cls._mapper.get_property_by_column(c).key for c in cls.__table__.columns]
+        return [cls.__mapper__.get_property_by_column(c).key for c in cls.__table__.columns]
 
     def as_dict(self):
         """convert sqlalchemy object to a dict"""

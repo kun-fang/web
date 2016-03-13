@@ -1,4 +1,6 @@
 """web util functions"""
+import datetime
+import json
 import difflib
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -8,6 +10,22 @@ from web import models
 class InvalidEntity(Exception):
     """Exception for invalid input"""
     pass
+
+
+class DateTimeEncoder(json.JSONEncoder):
+    """JSON enconder that can encode datetime and date"""
+    def default(self, obj):  # pylint: disable = method-hidden
+        if isinstance(obj, datetime.date):
+            return obj.strftime("%Y-%m-%d")
+        elif isinstance(obj, datetime.datetime):
+            return obj.strftime("%Y-%m-%d %H:$M:%S.%f")
+        else:
+            return json.JSONEncoder.default(self, obj)
+
+
+def json_dumps(obj):
+    """datetime and date json dumps"""
+    return json.dumps(obj, cls=DateTimeEncoder)
 
 
 def get_entity(model, id_, sess=None):
@@ -22,6 +40,7 @@ def new_document(user, sess=None):
         doc = models.Document(user)
         sess.add(doc)
         sess.commit()
+        return doc
 
 
 def update_document(doc_id, name, text, sess=None):
