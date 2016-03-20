@@ -1,35 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Document List</title>
-    <script type="text/javascript" src="/static/js/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/js/angular/angular.min.js"></script>
-    <script type="text/javascript" src="/static/js/bootstrap/dist/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="/static/js/bootstrap/dist/css/bootstrap.min.css">
-</head>
-<script type="text/javascript">
-angular.module("docListApp", [])
-
-.config(['$interpolateProvider', function($interpolateProvider) {
-  $interpolateProvider.startSymbol('{[');
-  $interpolateProvider.endSymbol(']}');
-}])
-
-.controller("docListCtrl", function ($scope, $http) {
-    $scope.docList = {};
-    $scope.docList.allDocs = {{ docs|safe }}
-    console.log($scope.docList)
-});
-</script>
-<body ng-app="docListApp">  
-    <div ng-controller="docListCtrl">
-        <a href="/logout">Logout {{ email }}</a>
-        <ul>
-            <li ng-repeat="item in docList.allDocs">
-                <a href="/doc/{[item.name]}">{[item.name]}</a>
-            </li>
-        </ul>
-    </div>
-</body>
-</html>
+{% raw %}
+<div>
+    <ul class="list-group">
+        <li class="list-group-item" ng-repeat="item in user.documents">
+            <a ui-sref="root.document({name: '{{item.name}}'})">{{item.name}}</a>
+        </li>
+    </ul>
+    <center><a href="" ng-click="newDocument()">NEW DOC</a></center>
+</div>
+{% endraw %}

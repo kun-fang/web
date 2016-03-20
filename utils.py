@@ -38,7 +38,7 @@ def new_document(user, sess=None):
     """create a new document"""
     with models.managed_session(sess=sess) as sess:
         doc = models.Document(user)
-        sess.add(doc)
+        doc = sess.merge(doc, load=True)
         sess.commit()
         return doc
 
@@ -49,8 +49,9 @@ def update_document(doc_id, name, text, sess=None):
         doc = get_entity(models.Document, doc_id)
         doc.text = text
         doc.name = name
-        sess.merge(doc, load=True)
+        doc = sess.merge(doc, load=True)
         sess.commit()
+        return doc
 
 
 def get_document(name, sess=None):
@@ -67,18 +68,20 @@ def new_user(email, sess=None):
     """create a new user"""
     with models.managed_session(sess=sess) as sess:
         user = models.User(email)
-        sess.add(user)
+        user = sess.merge(user, load=True)
         sess.commit()
+        sess.refres(user)
+        return user
 
 
 def get_user(email, sess=None):
-    """get user by email"""
+    """get all the documents for a user"""
     with models.managed_session(sess=sess) as sess:
         try:
             user = sess.query(models.User).filter_by(email=email).one()
-            return user
         except NoResultFound:
-            return None
+            return new_user(email, sess=sess)
+        return user
 
 
 def new_edit(user, document, old_text, new_text, sess=None):
@@ -86,8 +89,9 @@ def new_edit(user, document, old_text, new_text, sess=None):
     with models.managed_session(sess=sess) as sess:
         diff = diff_text(old_text, new_text)
         edit = models.EditHistory(user, document, diff)
-        sess.add(edit)
+        edit = sess.merge(edit, load=True)
         sess.commit()
+        return edit
 
 
 def get_history(user_id, document_id, sess=None):

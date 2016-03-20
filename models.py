@@ -14,7 +14,7 @@ from sqlalchemy.orm import sessionmaker, backref, relationship
 NAME_LENGTH = 16
 
 CURRENT_PATH = os.getcwd()
-engine = sqlalchemy.create_engine('sqlite:///{}/web.db'.format(CURRENT_PATH))
+engine = sqlalchemy.create_engine('sqlite:///{}/web/web.db'.format(CURRENT_PATH))
 
 
 def random_string(length):
@@ -68,7 +68,7 @@ class Document(Base):
 
     document_id = Column("id", Integer, primary_key=True)
     user_id = Column("user_id", Integer, ForeignKey("user.id"), nullable=False)
-    text = Column("text", BLOB)
+    text = Column("text", BLOB, default="")
     last_save_time = Column("last_save_time", DateTime)
     name = Column("name", String(64), unique=True)
 
