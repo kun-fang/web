@@ -40,6 +40,7 @@ def new_document(user, sess=None):
         doc = models.Document(user)
         sess.add(doc)
         sess.commit()
+        sess.refresh(doc)
         return doc
 
 
@@ -69,16 +70,18 @@ def new_user(email, sess=None):
         user = models.User(email)
         sess.add(user)
         sess.commit()
+        sess.refresh(user)
+        return user
 
 
 def get_user(email, sess=None):
-    """get user by email"""
+    """get all the documents for a user"""
     with models.managed_session(sess=sess) as sess:
         try:
             user = sess.query(models.User).filter_by(email=email).one()
-            return user
         except NoResultFound:
-            return None
+            return new_user(email, sess=sess)
+        return user
 
 
 def new_edit(user, document, old_text, new_text, sess=None):

@@ -2,24 +2,30 @@
 import json
 from flask import request, render_template, session, redirect, url_for
 
-from web import application
+from web import application, utils, models
 
 
-@application.route("/login", methods=["POST", "GET"])
+@application.route("/login", methods=["GET"])
+def login_page():
+    """login page"""
+    redirect_to = request.args.get('redirct_to', '/')
+    return render_template("login.html", redirect_to=redirect_to)
+
+
+@application.route("/login", methods=["POST"])
 def login():
     """login requests"""
-    if request.method == "GET":
-        return render_template('login.html')
-    elif request.method == "POST":
-        session['email'] = json.loads(request.data)['email']
-        return json.dumps({'email': session['email']})
+    email = json.loads(request.data)['email']
+    redirect_to = request.args['redirect_to']
+    session['email'] = email
+    return redirect(url_for('index'))
 
 
-@application.route('/logout')
+@application.route('/logout', methods=["GET", "POST"])
 def logout():
     """remove the email from session"""
     session.pop('email', None)
-    return redirect(url_for('login'))
+    return redirect(url_for('login_page'))
 
 
 # set the secret key.  keep this really secret:
