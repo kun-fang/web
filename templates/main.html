@@ -19,10 +19,11 @@
     <hr>
     <div class="row">
         <div class="col-sm-3">
-            <div doc-list list="user.documents" email="user.email"></div>
+            <!--div doc-list list="user.documents" email="user.email"></div-->
+            <div ui-view="list"></div>
         </div>
         <div ng-class="docWidth()">
-            <div ui-view></div>
+            <div ui-view="main"></div>
         </div>
         <div ng-class="historyWidth()">
             <div ng-show="showHistory">

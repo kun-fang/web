@@ -1,8 +1,8 @@
 {% raw %}
 <div>
     <ul class="list-group">
-        <li class="list-group-item" ng-repeat="item in fileList">
-            <a href="/doc/{{item.name}}">{{item.name}}</a>
+        <li class="list-group-item" ng-repeat="item in user.documents">
+            <a ui-sref="root.document({name: '{{item.name}}'})">{{item.name}}</a>
         </li>
     </ul>
     <center><a href="" ng-click="newDocument()">NEW DOC</a></center>

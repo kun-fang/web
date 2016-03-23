@@ -63,3 +63,5 @@ target/
 
 # js files
 static/js/bower/*
+web.db
+/.project
