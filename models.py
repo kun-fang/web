@@ -61,6 +61,11 @@ class User(Base):
     def __init__(self, email):
         self.email = email
 
+    def as_dict(self):
+        result = super(User, self).as_dict()
+        result['documents'] = [x.as_dict() for x in self.owned_documents]
+        return result
+
 
 class Document(Base):
     """Document table"""
@@ -77,10 +82,15 @@ class Document(Base):
     Index('document_name_idx', 'name', unique=True)
 
     def __init__(self, user):
-        self.user_id = user.user_id
+        self.user = user
         self.text = ""
         self.last_save_time = datetime.datetime.now()
         self.name = random_string(NAME_LENGTH)
+
+    def as_dict(self):
+        result = super(Document, self).as_dict()
+        result['history'] = [x.as_dict() for x in self.history]
+        return result
 
 
 class EditHistory(Base):
@@ -97,9 +107,9 @@ class EditHistory(Base):
     user = relationship(User)
     document = relationship(Document, backref=backref("history"))
 
-    def __init__(self, user, document, diff):
-        self.document_id = document.document_id
-        self.user_id = user.user_id
+    def __init__(self, document, diff):
+        self.document = document
+        self.user = document.user
         self.ts = datetime.datetime.now()
         self.diff = json.dumps(diff)
 

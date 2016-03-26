@@ -1,10 +1,16 @@
 {% raw %}
 <div>
     <ul class="list-group">
+        <li class="list-group-item active">
+            <center>
+                LIST OF FILES
+                <a href="" ng-click="newDocument()" style="color:white"><span class="glyphicon glyphicon-plus pull-right"></span></a>
+            </center>
+        </li>
         <li class="list-group-item" ng-repeat="item in user.documents">
             <a ui-sref="root.document({name: '{{item.name}}'})">{{item.name}}</a>
+            <a href="" ng-click="delDocument(item)" style="color:black"><span class="glyphicon glyphicon-minus pull-right"></span></a>
         </li>
     </ul>
-    <center><a href="" ng-click="newDocument()">NEW DOC</a></center>
 </div>
 {% endraw %}

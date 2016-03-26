@@ -35,7 +35,6 @@ angular.module('docApp', ["ui.router", "doc.controller", "doc.directive", "doc.s
         url: "/doc/:name",
         resolve: {
             document: function (user, userData, $stateParams) {
-                console.log("here", $stateParams.name, user);
                 return userData.getDocument($stateParams.name, user);
             }
         },
@@ -46,15 +45,17 @@ angular.module('docApp', ["ui.router", "doc.controller", "doc.directive", "doc.s
             }
         }
     }).state("root.document.history", {
-        url: "/doc/:name/history/:ts",
-        templateUrl: "/template/document.html"
+        url: "/history/:ts",
+        resolve: {
+            document: function (user, userData, $stateParams) {
+                return userData.getHistoryDocument($stateParams.name, $stateParams.ts, user);
+            }
+        },
+        views: {
+            "main@": {
+                templateUrl: "/template/document.html",
+                controller: "documentCtrl",
+            }
+        }
     });
-})
-.controller("mainCtrl", function ($scope) {
-    $scope.docWidth = function () {
-        return "col-sm-9";
-    };
-    $scope.$on("NewUser", function (event, user) {
-        $scope.user = user;
-    });
-})
+});

@@ -1,6 +1,5 @@
 """web util functions"""
 import datetime
-import json
 import difflib
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -12,43 +11,10 @@ class InvalidEntity(Exception):
     pass
 
 
-class DateTimeEncoder(json.JSONEncoder):
-    """JSON enconder that can encode datetime and date"""
-    def default(self, obj):  # pylint: disable = method-hidden
-        if isinstance(obj, datetime.date):
-            return obj.strftime("%Y-%m-%d")
-        elif isinstance(obj, datetime.datetime):
-            return obj.strftime("%Y-%m-%d %H:$M:%S.%f")
-        else:
-            return json.JSONEncoder.default(self, obj)
-
-
-def json_dumps(obj):
-    """datetime and date json dumps"""
-    return json.dumps(obj, cls=DateTimeEncoder)
-
-
-def get_entity(model, id_, sess=None):
-    """get entity by id"""
-    with models.managed_session(sess=sess) as sess:
-        return sess.query(model).filter_by(id=id_).all()
-
-
 def new_document(user, sess=None):
     """create a new document"""
     with models.managed_session(sess=sess) as sess:
         doc = models.Document(user)
-        doc = sess.merge(doc, load=True)
-        sess.commit()
-        return doc
-
-
-def update_document(doc_id, name, text, sess=None):
-    """update a document"""
-    with models.managed_session(sess=sess) as sess:
-        doc = get_entity(models.Document, doc_id)
-        doc.text = text
-        doc.name = name
         doc = sess.merge(doc, load=True)
         sess.commit()
         return doc
@@ -70,7 +36,6 @@ def new_user(email, sess=None):
         user = models.User(email)
         user = sess.merge(user, load=True)
         sess.commit()
-        sess.refres(user)
         return user
 
 
@@ -82,16 +47,6 @@ def get_user(email, sess=None):
         except NoResultFound:
             return new_user(email, sess=sess)
         return user
-
-
-def new_edit(user, document, old_text, new_text, sess=None):
-    """create a new text"""
-    with models.managed_session(sess=sess) as sess:
-        diff = diff_text(old_text, new_text)
-        edit = models.EditHistory(user, document, diff)
-        edit = sess.merge(edit, load=True)
-        sess.commit()
-        return edit
 
 
 def get_history(user_id, document_id, sess=None):

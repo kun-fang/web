@@ -39,14 +39,16 @@ angular.module("loginApp", [])
 });
 </script>
 <body ng-app="loginApp">
-    <form name="loginForm" ng-submit="login.submit()" ng-controller="loginCtrl" class="center" style="width:50%">
-        <div class="form-group">
-            <label>User Email: </label>
-            <input type="email" name="email" class="form-control" ng-model="login.email" required>
-            <i class="text-danger"
-                  ng-show="loginForm.email.$dirty && loginForm.email.$error.required">Email is required</i>
-        </div>
-        <button type="submit" ng-disabled="loginForm.$invalid || login.loading" class="btn btn-primary">LOGIN</button>
-    </form>
+    <div class="center well" style="width:500px">
+        <form name="loginForm" ng-submit="login.submit()" ng-controller="loginCtrl">
+            <div class="form-group">
+                <label>User Email: </label>
+                <input type="email" name="email" class="form-control" ng-model="login.email" required>
+                <i class="text-danger"
+                      ng-show="loginForm.email.$dirty && loginForm.email.$error.required">Email is required</i>
+            </div>
+            <button type="submit" ng-disabled="loginForm.$invalid || login.loading" class="btn btn-primary">LOGIN</button>
+        </form>
+    </div>
 </body>
 </html>

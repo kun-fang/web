@@ -1,2 +1,2 @@
 # !/bin/bash
-PYTHONPATH=/home/fangkun/Documents/Projects python -m web.app
+PYTHONPATH=$HOME/Documents/Projects python -m web.app

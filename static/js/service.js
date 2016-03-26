@@ -31,12 +31,15 @@ angular.module("doc.service", [])
         return deferred.promise;
     };
 
+    var delDocument = function (doc) {
+        return $http.post("/del_doc", {doc: doc});
+    };
+
     var getDocument = function (name, user) {
         var deferred = $q.defer();
         var helper = function (user) {
             for (var i = 0; i < user.documents.length; i += 1) {
                 if (user.documents[i].name === name) {
-                    console.log(user.documents[i])
                     return user.documents[i]
                 }
             }
@@ -54,9 +57,35 @@ angular.module("doc.service", [])
         return deferred.promise;
     };
 
+    var getHistoryDocument = function (name, ts, user) {
+        var deferred = $q.defer();
+        getDocument(name, user).then(function (document) {
+            $http.post('/get_history', {
+                email: user.email,
+                document: document,
+                ts: ts
+            }).then(function (response) {
+                deferred.resolve(response.data)
+            }, function (response) {
+                deferred.reject(response);
+            });
+        });
+        return deferred.promise;
+    };
+
+    var saveDocument = function (document) {
+        return $http.post('/save_doc/' + document.name, {
+            text: document.text
+        });
+    };
+
     return {
         getUser: getUser,
         newDocument: newDocument,
         getDocument: getDocument,
+        getHistoryDocument: getHistoryDocument,
+        saveDocument: saveDocument,
+        delDocument: delDocument,
     };
 })
+;

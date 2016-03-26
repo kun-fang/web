@@ -1,4 +1,23 @@
-<div>
-    <textarea class="form-control" ng-model="document.text" row=20></textarea>
-    <button class="btn btn-primary" ng-click="save()">SAVE</button>
+{% raw %}
+<div ng-class="{'': !display.showHistory, 'col-sm-9': display.showHistory}">
+    <div style="margin-bottom:10px">
+        <button class="btn btn-primary" ng-click="saveDocument()">
+            <span class="glyphicon glyphicon-floppy-disk"></span>
+            SAVE
+        </button>
+        <button class="btn btn-warning pull-right" ng-click="display.showHistory = !display.showHistory">
+            <span class="glyphicon glyphicon-list"></span>
+            {{display.showHistory ? 'HIDE' : 'SHOW'}} HISTORY
+        </button>
+    </div>
+    <textarea class="form-control" ng-model="document.text" rows=20></textarea>
 </div>
+<div ng-class="{'': !display.showHistory, 'col-sm-3': display.showHistory}" ng-show="display.showHistory">
+    <ul class="list-group">
+        <li class="list-group-item active"><center>DOCUMENT HISTORY</center></li>
+        <li ng-repeat="history in document.history" class="list-group-item">
+            <a href="" ui-sref="root.document.history({name: '{{document.name}}', ts: '{{history.ts}}'})">{{history.ts}}</a>
+        </li>
+    </ul>
+</div>
+{% endraw %}
