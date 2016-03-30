@@ -65,3 +65,4 @@ target/
 static/js/bower/*
 web.db
 /.project
+/web.sublime-*

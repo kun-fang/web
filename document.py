@@ -4,6 +4,9 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from web import application, session, utils, models, login_required, InvalidRequest
 
+TIME_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
+
+
 @application.route("/doc/<name>")
 @login_required
 def get_document(name):
@@ -15,7 +18,6 @@ def get_document(name):
             raise InvalidRequest(401, "Not authorized")
         else:
             return jsonify(doc.as_dict())
-
 
 
 @application.route("/new_doc", methods=["POST"])
@@ -45,6 +47,7 @@ def del_document():
         else:
             sess.delete(doc)
             sess.commit()
+            print "herereererererer"
             return "success"
 
 
@@ -85,15 +88,18 @@ def get_history_document():
     """get the document text at a time ts"""
     email = session['email']
     data = json.loads(request.data)
-    document = data['document']
+    name = data['name']
     ts = data['ts']
-    if not document and data['email'] != email:
-        raise InvalidRequest(401, "Not authorized")
-    else:
-        text = document['text']
-        for item in reversed(document['history']):
-            if item['ts'] == ts:
-                document['text'] = text
-                return jsonify(document)
-            text = utils.convert(text, item['diff'], back=True)
-        return jsonify(document)
+    with models.managed_session() as sess:
+        doc = utils.get_document(name=name, sess=sess)
+        if not doc and doc.user.email != email:
+            raise InvalidRequest(401, "Not authorized")
+        else:
+            doc = doc.as_dict()
+            text = doc['text']
+            for item in reversed(doc['history']):
+                if item['ts'].strftime(TIME_FORMAT) == ts:
+                    doc['text'] = text
+                    break
+                text = utils.convert(text, item['diff'], back=True)
+            return jsonify(doc)

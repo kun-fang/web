@@ -24,7 +24,7 @@
     <ul class="list-group">
         <li class="list-group-item active"><center>DOCUMENT HISTORY</center></li>
         <li ng-repeat="history in document.history" class="list-group-item">
-            <a href="" ui-sref="root.document.history({name: '{{document.name}}', ts: '{{history.ts}}'})">{{history.ts}}</a>
+            <a href="" ui-sref="root.history({name: '{{document.name}}', ts: '{{history.ts}}'})">{{history.ts}}</a>
         </li>
     </ul>
 </div>

@@ -1,5 +1,4 @@
 """web util functions"""
-import datetime
 import difflib
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -52,7 +51,7 @@ def get_user(email, sess=None):
 def get_history(user_id, document_id, sess=None):
     """get edit history of a document"""
     with models.managed_session(sess=sess) as sess:
-        document = get_entity(models.Document, document_id)
+        document = sess.query(models.Document).filter_by(document_id=document_id).one()
         if document.user_id != user_id:
             raise InvalidEntity("document and user do not match")
         return document.history
@@ -69,7 +68,7 @@ def diff_text(old_text, new_text):
             continue
         diff.append({
             'old': [i1, i2, old_text[i1:i2]],
-            'new': [j1, j2, new_text[i1:i2]]
+            'new': [j1, j2, new_text[j1:j2]]
         })
     return diff
 

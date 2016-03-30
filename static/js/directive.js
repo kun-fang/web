@@ -15,7 +15,7 @@ angular.module("doc.directive", [])
             '-webkit-border-radius': "5px",
             '-moz-border-radius': "5px",
             'border-radius': "5px",
-        })
+        });
         scope.cmObj.doc.setValue(scope.text);
         scope.cmObj.on('change', function (instance) {
             scope.$evalAsync(function () {
@@ -38,5 +38,5 @@ angular.module("doc.directive", [])
             type: "@",
         },
         link: link
-    }
-})
+    };
+});
