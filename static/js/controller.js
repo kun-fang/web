@@ -1,5 +1,5 @@
-/* global angular */
-angular.module("doc.controller", ["doc.service"])
+/* global angular, $ */
+angular.module("doc.controller", ["doc.service", "doc.directive"])
 .controller("mainCtrl", function ($scope) {
     $scope.display = {
         showHistory: false,
@@ -25,6 +25,8 @@ angular.module("doc.controller", ["doc.service"])
 }])
 .controller('documentCtrl', ['$scope', 'document', 'userData', function($scope, document, userData){
     $scope.document = document;
+    $scope.codeTypes = ['python', 'javascript']
+    $scope.document.type = $scope.codeTypes[0];
     $scope.saveDocument = function () {
         userData.saveDocument($scope.document).then(function (response) {
             $scope.document = response.data;
