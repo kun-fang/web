@@ -1,22 +1,30 @@
 {% raw %}
 <div ng-class="{'': !display.showHistory, 'col-sm-9': display.showHistory}">
-    <div style="margin-bottom:10px">
-        <button class="btn btn-primary" ng-click="saveDocument()">
-            <span class="glyphicon glyphicon-floppy-disk"></span>
-            SAVE
-        </button>
-        <button class="btn btn-warning pull-right" ng-click="display.showHistory = !display.showHistory">
-            <span class="glyphicon glyphicon-list"></span>
-            {{display.showHistory ? 'HIDE' : 'SHOW'}} HISTORY
-        </button>
+    <div style="margin-bottom:10px" class="row">
+        <div class="col-sm-6">
+            <button class="btn btn-danger" ng-click="saveDocument()">
+                <span class="glyphicon glyphicon-floppy-disk"></span>
+                SAVE
+            </button>
+        </div>
+        <div class="col-sm-6">
+            <button class="btn btn-warning pull-right" ng-click="display.showHistory = !display.showHistory">
+                <span class="glyphicon glyphicon-list"></span>
+                {{display.showHistory ? 'HIDE' : 'SHOW'}} HISTORY
+            </button>
+            <div class="input-group pull-right" style="width:200px;margin-right:10px">
+                <span class="input-group-addon">Code Type:</span>
+                <select ng-model="document.type" class="form-control" ng-options="type for type in codeTypes"></select>
+            </div>
+        </div>
     </div>
-    <textarea class="form-control" ng-model="document.text" rows=20></textarea>
+    <div code-area text="document.text" type="{{document.type}}"></div>
 </div>
 <div ng-class="{'': !display.showHistory, 'col-sm-3': display.showHistory}" ng-show="display.showHistory">
     <ul class="list-group">
         <li class="list-group-item active"><center>DOCUMENT HISTORY</center></li>
         <li ng-repeat="history in document.history" class="list-group-item">
-            <a href="" ui-sref="root.document.history({name: '{{document.name}}', ts: '{{history.ts}}'})">{{history.ts}}</a>
+            <a href="" ui-sref="root.history({name: '{{document.name}}', ts: '{{history.ts}}'})">{{history.ts}}</a>
         </li>
     </ul>
 </div>

@@ -77,7 +77,7 @@ class Document(Base):
     last_save_time = Column("last_save_time", DateTime)
     name = Column("name", String(64), unique=True)
 
-    user = relationship(User, backref=backref("owned_documents"))
+    user = relationship(User, backref=backref("owned_documents", cascade="delete, delete-orphan"))
 
     Index('document_name_idx', 'name', unique=True)
 
@@ -104,8 +104,8 @@ class EditHistory(Base):
     ts = Column("ts", DateTime, primary_key=True)
     diff = Column("diff", Text)
 
-    user = relationship(User)
-    document = relationship(Document, backref=backref("history"))
+    user = relationship(User, cascade="delete")
+    document = relationship(Document, backref=backref("history", cascade="delete, delete-orphan"))
 
     def __init__(self, document, diff):
         self.document = document
