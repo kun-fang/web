@@ -1,5 +1,6 @@
+"""request handler for document functions"""
 import json
-from flask import request, jsonify
+from flask import request, jsonify, render_template
 from sqlalchemy.orm.exc import NoResultFound
 
 from web import application, session, utils, models, login_required, InvalidRequest
@@ -7,7 +8,15 @@ from web import application, session, utils, models, login_required, InvalidRequ
 TIME_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 
 
-@application.route("/doc/<name>")
+@application.route("/manage")
+@login_required
+def manage_index():
+    """index page"""
+    email = session.get('email')
+    return render_template('manage.html', email=email)
+
+
+@application.route("/manage/doc/<name>")
 @login_required
 def get_document(name):
     """document page"""
@@ -20,7 +29,7 @@ def get_document(name):
             return jsonify(doc.as_dict())
 
 
-@application.route("/new_doc", methods=["POST"])
+@application.route("/manage/new_doc", methods=["POST"])
 @login_required
 def create_document():
     """create a new document"""
@@ -31,7 +40,7 @@ def create_document():
         return jsonify(document)
 
 
-@application.route("/del_doc", methods=["POST"])
+@application.route("/manage/del_doc", methods=["POST"])
 @login_required
 def del_document():
     """delete document"""
@@ -51,7 +60,7 @@ def del_document():
             return "success"
 
 
-@application.route("/user_data", methods=["GET"])
+@application.route("/manage/user_data", methods=["GET"])
 @login_required
 def get_user():
     """get data regarding a user"""
@@ -61,7 +70,7 @@ def get_user():
         return jsonify(user.as_dict())
 
 
-@application.route("/save_doc/<name>", methods=['POST'])
+@application.route("/manage/save_doc/<name>", methods=['POST'])
 @login_required
 def save_document(name):
     """save document and document history"""
@@ -82,14 +91,14 @@ def save_document(name):
                 return jsonify(doc.as_dict())
 
 
-@application.route("/get_history", methods=['POST'])
+@application.route("/manage/get_history", methods=['POST'])
 @login_required
 def get_history_document():
     """get the document text at a time ts"""
     email = session['email']
     data = json.loads(request.data)
     name = data['name']
-    ts = data['ts']
+    ts = data['ts']  # pylint: disable = invalid-name
     with models.managed_session() as sess:
         doc = utils.get_document(name=name, sess=sess)
         if not doc and doc.user.email != email:

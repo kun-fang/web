@@ -4,7 +4,7 @@ angular.module("doc.service", [])
 
     var getUser = function () {
         var deferred = $q.defer();
-        $http.get("/user_data").then(function (response) {
+        $http.get("/manage/user_data").then(function (response) {
             deferred.resolve(response.data);
         }, function (response) {
             deferred.reject(response);
@@ -14,7 +14,7 @@ angular.module("doc.service", [])
 
     var newDocument = function () {
         var deferred = $q.defer();
-        $http.post("/new_doc").then(function (response) {
+        $http.post("/manage/new_doc").then(function (response) {
             deferred.resolve(response.data);
         }, function (response) {
             deferred.reject(doc);
@@ -23,7 +23,7 @@ angular.module("doc.service", [])
     };
 
     var delDocument = function (doc) {
-        return $http.post("/del_doc", {doc: doc});
+        return $http.post("/manage/del_doc", {doc: doc});
     };
 
     var getDocument = function (name) {
@@ -48,7 +48,7 @@ angular.module("doc.service", [])
 
     var getHistoryDocument = function (name, ts) {
         var deferred = $q.defer();
-        $http.post('/get_history', {
+        $http.post('/manage/get_history', {
             name: name,
             ts: ts
         }).then(function (response) {
@@ -61,7 +61,7 @@ angular.module("doc.service", [])
 
     var saveDocument = function (document) {
         var deferred = $q.defer();
-        $http.post('/save_doc/' + document.name, {
+        $http.post('/manage/save_doc/' + document.name, {
             text: document.text
         }).success(function (doc) {
             deferred.resolve(doc);

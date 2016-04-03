@@ -2,15 +2,15 @@
 from functools import wraps
 from flask import Flask, request, session, redirect, url_for, render_template, jsonify
 
-from web import models, utils
-
 application = Flask(__name__)  # pylint: disable = invalid-name
 
 
 def login_required(func):
+    """decorator for login page"""
     @wraps(func)
     def decorated_funcs(*args, **kwargs):
-        email = session.get('email');
+        """decorator function for redirecting to login page"""
+        email = session.get('email')
         if email is None:
             return redirect(url_for('login', redirect_to=request.url))
         else:
@@ -23,14 +23,14 @@ def login_required(func):
 def index():
     """index page"""
     email = session.get('email')
-    return render_template('main.html', email=email)
+    return render_template('index.html', email=email)
 
 
-@application.route("/template/<file>")
+@application.route("/template/<filename>")
 @login_required
-def get_template_file(file):
+def get_template_file(filename):
     """get a template file"""
-    return render_template(file)
+    return render_template(filename)
 
 
 class InvalidRequest(Exception):
@@ -43,9 +43,10 @@ class InvalidRequest(Exception):
 
 @application.errorhandler(InvalidRequest)
 def handle_invalid_request(error):
-    response =  jsonify(error.message)
+    """request handler for invalid request"""
+    response = jsonify(error.message)
     response.error_code = error.error_code
     return response
 
-
-from web import login, document
+# pylint: disable = wrong-import-position
+from web import login, document  # nopep8
