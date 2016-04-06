@@ -1,10 +1,10 @@
 """script to run web server"""
-from web import application
+from web import application, socketio_app
 
 
 def main():
     """web server start"""
-    application.run(debug=True)
+    socketio_app.run(application, debug=True)
 
 
 if __name__ == "__main__":
