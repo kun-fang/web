@@ -1,8 +1,10 @@
 """web server script"""
 from functools import wraps
 from flask import Flask, request, session, redirect, url_for, render_template, jsonify
+from flask_socketio import SocketIO
 
 application = Flask(__name__)  # pylint: disable = invalid-name
+socketio_app = SocketIO(application)
 
 
 def login_required(func):
@@ -49,4 +51,4 @@ def handle_invalid_request(error):
     return response
 
 # pylint: disable = wrong-import-position
-from web import login, document  # nopep8
+from web import login, document, websocket_test  # nopep8
