@@ -6,25 +6,23 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.2/angular.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
+    <script type="text/javascript" src="/static/js/socketio.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap-theme.min.css">
 </head>
 <script>
-    angular.module('socketApp', [])
-    .controller('socketCtrl', ['$scope', function($scope){
-        var socket = io.connect("/test_text")
+    angular.module('socketApp', ['socket.io'])
+    .config(['$socketProvider', function($socketProvider) {
+        $socketProvider.connect('/test_text');
+    }])
+    .controller('socketCtrl', ['$scope', '$socket', function($scope, $socket){
         $scope.$watch('text', function (newVal, oldVal) {
             if (newVal !== oldVal && !!newVal) {
-                console.log($scope.text);
-                socket.emit("update_text", {text: $scope.text});
+                $socket.emit("update_text", {text: $scope.text});
             }
         });
-        socket.on("update_text", function (data) {
-            $scope.$apply(function () {
-                console.log("TTTTTTTTTTT", data.text)
-                console.log($('#msg'))
-                $('#msg').val(data.text);
-            });
+        $socket.on("update_text", function (data) {
+            $scope.serverMessage = data.text;
         });
     }]);
 </script>
@@ -33,9 +31,10 @@
     <p><center>login is not required</center></p>
     <hr>
     <textarea rows="10" ng-model="text" class="form-control"></textarea>
+    {{serverMessage}}
     <hr>
     <div class="well">
-        <p id="msg">{{serverMessage}}</p>
+        <p><span ng-bind="serverMessage"></span></p>
     </div>
 </body>
 </html>
