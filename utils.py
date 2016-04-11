@@ -29,22 +29,22 @@ def get_document(name, sess=None):
             return None
 
 
-def new_user(email, sess=None):
+def new_user(name, email, sess=None):
     """create a new user"""
     with models.managed_session(sess=sess) as sess:
-        user = models.User(email)
+        user = models.User(name, email)
         user = sess.merge(user, load=True)
         sess.commit()
         return user
 
 
-def get_user(email, sess=None):
+def get_user(name, email, sess=None):
     """get all the documents for a user"""
     with models.managed_session(sess=sess) as sess:
         try:
-            user = sess.query(models.User).filter_by(email=email).one()
+            user = sess.query(models.User).filter_by(name=name, email=email).one()
         except NoResultFound:
-            return new_user(email, sess=sess)
+            user = new_user(name, email, sess=sess)
         return user
 
 
@@ -99,3 +99,34 @@ def convert(text, diff, back=False):
         prev = end
     new_text.extend(text[prev:])
     return "\n".join(new_text)
+
+
+def get_room(room, sess=None, create_room=True):
+    with models.managed_session(sess=sess) as sess:
+        try:
+            room = sess.query(models.Room).filter_by(room=room).one()
+        except NoResultFound:
+            if create_room:
+                room = models.Room(room)
+                room = sess.merge(room, load=True)
+                sess.commit()
+            else:
+                raise
+        return room
+
+
+def add_to_room(room, user, sess=None):
+    with models.managed_session(sess=sess) as sess:
+        room = get_room(room, sess=sess)
+        room.add_user(user)
+        sess.commit()
+        return room
+
+
+def remove_from_room(room, user, sess=None):
+    with models.managed_session(sess=sess) as sess:
+        room = get_room(room, sess=sess, create_room=False)
+        if room:
+            room.remove_user(user)
+            sess.commit()
+        return room

@@ -13,7 +13,8 @@ TIME_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 def manage_index():
     """index page"""
     email = session.get('email')
-    return render_template('manage.html', email=email)
+    name = session.get('name')
+    return render_template('manage.html', name=name, email=email)
 
 
 @application.route("/manage/doc/<name>")

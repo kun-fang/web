@@ -1,7 +1,21 @@
 /* global angular, CodeMirror */
 angular.module("doc.codearea", [])
 
-.directive("codeArea", function () {
+.service("codeAreaService", function () {
+    var codeAreaService = {};
+    codeAreaService.setCodeArea = function (obj) {
+        codeAreaService.codeArea = obj;
+    };
+    codeAreaService.isClean = function () {
+        return codeAreaService.codeArea.isClean();
+    };
+    codeAreaService.markClean = function () {
+        codeAreaService.codeArea.markClean();
+    };
+    return codeAreaService;
+})
+
+.directive("codeArea", function (codeAreaService) {
     var link = function (scope, element) {
 
         scope.cmObj = CodeMirror.fromTextArea(element[0], {
@@ -9,7 +23,7 @@ angular.module("doc.codearea", [])
             matchBrackets: true,
             mode: scope.type,
         });
-        scope.codeFunc = scope.codeFunc || {};
+        codeAreaService.setCodeArea(scope.cmObj);
         angular.element(".CodeMirror").css({
             'height': "500px",
             'border': "1px solid #ccc",
@@ -18,7 +32,7 @@ angular.module("doc.codearea", [])
             'border-radius': "5px",
         });
         scope.cmObj.doc.setValue(scope.text || "");
-        scope.codeFunc.isClean = scope.cmObj.isClean;
+        scope.cmObj.markClean();
         scope.cmObj.on('change', function (instance) {
             scope.$evalAsync(function () {
                 scope.text = instance.getValue();
@@ -45,7 +59,6 @@ angular.module("doc.codearea", [])
         replace: true,
         scope: {
             text: "=",
-            codeFunc: "=",
             type: "@",
         },
         link: link

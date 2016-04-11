@@ -1,5 +1,5 @@
 """script to run web server"""
-from web import application, socketio_app
+from web import application, socketio_app, interactive
 
 
 def main():

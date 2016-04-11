@@ -7,7 +7,7 @@ import os
 import random
 import string
 import sqlalchemy
-from sqlalchemy import Column, Integer, Text, String, DateTime, BLOB, MetaData, ForeignKey, Index
+from sqlalchemy import Column, Integer, Text, String, DateTime, BLOB, BigInteger, MetaData, ForeignKey, Index
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm import sessionmaker, backref, relationship
 
@@ -54,11 +54,13 @@ class User(Base):
     __tablename__ = "user"
 
     user_id = Column("id", Integer, primary_key=True)
-    email = Column("email", String(256), unique=True, nullable=False)
+    name = Column("name", String(256), nullable=False)
+    email = Column("email", String(256), nullable=False)
 
-    Index('user_email_idx', 'email', unique=True)
+    Index('user_name_email_idx', 'name', 'email', unique=True)
 
-    def __init__(self, email):
+    def __init__(self, name, email):
+        self.name = name
         self.email = email
 
     def as_dict(self):
@@ -117,6 +119,37 @@ class EditHistory(Base):
         result = super(EditHistory, self).as_dict()
         result['diff'] = json.loads(result['diff'])
         return result
+
+
+class Room(Base):
+    """room record"""
+    __tablename__ = 'room'
+
+    room = Column("room", String(16), nullable=False, primary_key=True)
+    text = Column("text", BLOB, default="")
+    users = Column("users", String(2048), nullable=False, default="[]")
+    version = Column("version", BigInteger, nullable=False)
+
+    def __init__(self, room):
+        self.room = room
+        self.text = ""
+        self.users = "[]"
+        self.version = 0
+
+    def as_dict(self):
+        result = super(Room, self).as_dict()
+        result['users'] = json.loads(result['users'] or '[]')
+        return result
+
+    def add_user(self, user):
+        users = {x['email']: x['name'] for x in json.loads(self.users or '[]')}
+        users[user['email']] = user['name']
+        self.users = json.dumps([{'email': k, 'name': v} for k, v in users.iteritems()])
+
+    def remove_user(self, user):
+        users = {x['email']: x['name'] for x in json.loads(self.users or '[]')}
+        users.pop(user['email'], None)
+        self.users = json.dumps([{'email': k, 'name': v} for k, v in users.iteritems()])
 
 
 def init_models():

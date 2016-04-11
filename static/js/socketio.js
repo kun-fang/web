@@ -18,6 +18,12 @@ angular.module("socket.io", [])
         socketio.emit = function (namespace, obj) {
             socket.emit(namespace, obj);
         };
+        socketio.join = function (namespace, room) {
+            socket.emit('join', {room: room});
+        };
+        socketio.leave = function (namespace, room) {
+            socket.emit('leave', {room: room});
+        };
         return socketio;
     }];
 }]);

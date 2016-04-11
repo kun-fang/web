@@ -26,9 +26,10 @@ angular.module("loginApp", [])
             method: 'POST',
             url: '/login',
             params: {
-                redirect_to: {{redirect_to|tojson}}
+                redirect_to: '{{redirect_to}}'
             },
             data: {
+                name: $scope.login.name,
                 email: $scope.login.email
             }
         }).success(function () {
@@ -42,10 +43,18 @@ angular.module("loginApp", [])
     <div class="center well" style="width:500px">
         <form name="loginForm" ng-submit="login.submit()" ng-controller="loginCtrl">
             <div class="form-group">
+                <label>Name: </label>
+                <input type="text" name="name" class="form-control" ng-model="login.name" required>
+                <i class="text-danger" ng-show="loginForm.name.$dirty && loginForm.name.$error.required">
+                    Name is required!
+                </i>
+            </div>
+            <div class="form-group">
                 <label>User Email: </label>
                 <input type="email" name="email" class="form-control" ng-model="login.email" required>
-                <i class="text-danger"
-                      ng-show="loginForm.email.$dirty && loginForm.email.$error.required">Email is required</i>
+                <i class="text-danger" ng-show="loginForm.email.$dirty && loginForm.email.$error.required">
+                    Email is required!
+                </i>
             </div>
             <button type="submit" ng-disabled="loginForm.$invalid || login.loading" class="btn btn-primary">LOGIN</button>
         </form>
