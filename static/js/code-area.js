@@ -21,7 +21,9 @@ angular.module("doc.codearea", [])
         scope.cmObj = CodeMirror.fromTextArea(element[0], {
             lineNumbers: true,
             matchBrackets: true,
+            autoCloseBrackets: true,
             mode: scope.type,
+            theme: 'solarized light'
         });
         codeAreaService.setCodeArea(scope.cmObj);
         angular.element(".CodeMirror").css({
