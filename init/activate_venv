@@ -1,6 +1,6 @@
 #! /bin/bash
 
-export WORKON_HOME=$HOME/.venv
+export WORKON_HOME=$LIBRARY_DIR/.venv
 source /usr/local/bin/virtualenvwrapper.sh
 
 workon web
